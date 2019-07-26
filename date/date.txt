@@ -1,0 +1,48 @@
+Notez qu'il existe aussi les fonctionsCURDATE() et CURTIME() qui retournent respectivement
+uniquement la date (AAAA-MM-JJ) et l'heure (HH:MM:SS).
+
+- DAY(),MONTH(),YEAR() : extraire le jour, le mois ou l'année
+Extraire des informations d'une date ? C'est facile ! Voici un exemple d'utilisation :
+SELECT pseudo, message, DAY(date) AS jour FROM minichat
+On récupèrera trois champs : le pseudo, le message et le numéro du jour où il a été posté.
+
+- HOUR(),MINUTE(),SECOND() : extraire les heures, minutes, secondes
+De la même façon, avec ces fonctions il est possible d'extraire les heures, minutes et secondes
+d'un champ de type DATETIME ou TIME.
+SELECT pseudo, message, HOUR(date) AS heure FROM minichat
+
+- DATE_FORMAT : formater une date
+Avec les fonctions que l'on vient de découvrir à l'instant, on pourrait extraire tous les éléments de la date,
+comme ceci :
+SELECT pseudo, message, DAY(date) AS jour, MONTH(date) AS mois, YEAR(date) AS annee, HOUR(date) AS heure, MINUTE(date) AS minute, SECOND(date) AS seconde FROM minichat
+On pourrait ensuite afficher la date en PHP dans l'ordre que l'on souhaite
+à l'aide du découpage en champs que l'on vient de faire :
+<?php
+echo $donnees['jour'] . '/' . $donnees['mois'] . '/' . $donnees['annee'] . '...';
+?>
+C'est cependant un peu compliqué, et il y a plus simple.
+La fonction DATE_FORMAT vous permet d'adapter directement la date au format que vous préférez.
+Il faut dire que le format par défaut de MySQL (AAAA-MM-JJ HH:MM:SS) n'est pas très courant en France.
+Voici comment on pourrait l'utiliser :
+SELECT pseudo, message, DATE_FORMAT(date, '%d/%m/%Y %Hh%imin%ss') AS date FROM minichat
+Ainsi, on récupèrerait les dates avec un champ nommé date sous la forme 11/03/2010 15h47min49s.
+
+Comment ça marche, ce bazar ?
+Les symboles%d,%m,%Y(etc.) sont remplacés par le jour, le mois, l'année, etc.
+Les autres symboles et lettres sont affichés tels quels.
+Il existe beaucoup d'autres symboles pour extraire par exemple le nom du jour
+(la plupart du temps en anglais malheureusement, comme « Saturday »), le numéro du jour dans l'année, etc.
+La liste des symboles disponibles est dans la doc' à la sectionDATE_FORMAT.
+
+DATE_ADDetDATE_SUB : ajouter ou soustraire des dates
+Il est possible d'ajouter ou de soustraire des heures, minutes, secondes, jours, mois ou années à une date.
+Il faut envoyer deux paramètres à la fonction : la date sur laquelle travailler
+et le nombre à ajouter ainsi que son type.
+Par exemple, supposons que l'on souhaite afficher une date d'expiration du message.
+Celle-ci correspond à « la date où a été posté le message + 15 jours ». Voici comment écrire la requête :
+SELECT pseudo, message, DATE_ADD(date, INTERVAL 15 DAY) AS date_expiration FROM minichat
+Le champdate_expirationcorrespond à « la date de l'entrée + 15 jours ».
+Le mot-cléINTERVALne doit pas être changé ;
+en revanche, vous pouvez remplacer DAY par MONTH, YEAR, HOUR, MINUTE, SECOND, etc.
+Par conséquent, si vous souhaitez indiquer que les messages expirent dans deux mois :
+SELECT pseudo, message, DATE_ADD(date, INTERVAL 2 MONTH) AS date_expiration FROM minichat

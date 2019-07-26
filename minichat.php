@@ -25,12 +25,12 @@
 include 'config.php';
 
 // Récupération des 10 derniers messages
-$reponse = $pdo->query('SELECT pseudo, message FROM messages ORDER BY ID DESC LIMIT 0, 10');
+$reponse = $pdo->query('SELECT pseudo, message, created_at FROM messages ORDER BY ID DESC LIMIT 0, 10');
 
 // Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
 while ($donnees = $reponse->fetch())
 {
-	echo '<p><strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : ' . htmlspecialchars($donnees['message']) . '</p>';
+	echo '<p><strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : ' . htmlspecialchars($donnees['message']) . ' ...... le ' . $donnees['created_at'] . '</p>';
 }
 
 $reponse->closeCursor();
